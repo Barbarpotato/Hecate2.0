@@ -1,0 +1,21 @@
+.primaryColor {
+    color: #292b37;
+}
+
+.secondaryColor {
+    color: #bd93f9;
+}
+
+.ternaryColor {
+    color: #ff79c6;
+}
+
+.primaryFontColor {
+    color: #faf9ff;
+}
+
+.lighting-effect-pink {
+    border-radius: 10px;
+    /* Adjust the value as needed */
+    box-shadow: 10px 20px 45px #cc7bc9;
+}
