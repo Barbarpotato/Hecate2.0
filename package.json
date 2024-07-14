@@ -9,6 +9,8 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@apollo/server": "^4.10.4",
+    "@as-integrations/next": "^3.0.0",
     "@chakra-ui/react": "^2.8.2",
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.5",
@@ -16,8 +18,11 @@
     "@prisma/client": "^5.16.2",
     "bcrypt": "^5.1.1",
     "framer-motion": "^11.3.2",
+    "graphql": "^16.9.0",
+    "graphql-tag": "^2.12.6",
     "next": "14.2.5",
     "next-auth": "^4.24.7",
+    "rate-limiter-flexible": "^5.0.3",
     "react": "^18",
     "react-dom": "^18"
   },
