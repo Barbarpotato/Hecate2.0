@@ -1,9 +1,8 @@
 import prisma from "@/app/libs/prisma";
-import { middleware } from "../middleware";
+import { isAuthenticated } from '@/app/libs/auth';
 
 const withMiddleware = (handler) => async (req, res) => {
-    const isAuth = middleware(req, res);
-    if (!isAuth) {
+    if (!isAuthenticated(req)) {
         return res.status(401).json({ success: false, message: 'Authentication failed' });
     }
     return handler(req, res);
