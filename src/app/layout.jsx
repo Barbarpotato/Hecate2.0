@@ -1,5 +1,6 @@
 import { Inter } from "next/font/google";
 import Navigation from "@/components/navigation";
+import Footer from "@/components/footer";
 import { Providers } from "./provider";
 import "../styles/globals.css";
 
@@ -14,13 +15,14 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <head>
-        <link rel="icon" href="/next.svg" type="image/svg+xml" />
+        <link rel="icon" href="/Hecate.ico" type="image/svg+xml" />
       </head>
       <body className={inter.className} style={{ backgroundColor: "#292b37", color: "#faf9ff" }}>
         <Providers>
           <>
             <Navigation />
             {children}
+            <Footer />
           </>
         </Providers>
 
