@@ -25,13 +25,27 @@ const LoginPage = () => {
     const onSubmit = async () => {
         setIsLoading(true);
         try {
-            await signIn("credentials", loginData);
-            toast({
-                title: `Successs Loggin in!`,
-                status: 'success',
-                isClosable: false,
-            })
-            setLoginData({ email: "", password: "" });
+            const result = await signIn("credentials", {
+                ...loginData,
+                redirect: false,
+            });
+
+            if (result?.error) {
+                toast({
+                    title: "Error logging in",
+                    description: result.error,
+                    status: "error",
+                    isClosable: true,
+                });
+            } else {
+                toast({
+                    title: "Success logging in!",
+                    status: "success",
+                    isClosable: false,
+                });
+                setLoginData({ email: "", password: "" });
+                window.location.href = "/dashboard";
+            }
             setIsLoading(false);
         } catch (error) {
             toast({
