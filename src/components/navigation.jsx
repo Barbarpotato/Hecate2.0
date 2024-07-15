@@ -21,8 +21,7 @@ function Navigation() {
 
     const currentPath = usePathname();
 
-    // Check if session is expired (optional - usually handled by NextAuth)
-    const isSessionExpired = session?.expires && new Date(session.expires) < new Date();
+    console.log(status)
 
     return (
         <Flex paddingY={2}>

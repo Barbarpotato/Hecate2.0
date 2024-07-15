@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { useSession, signOut } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import useWindowSize from "@/hooks/useWindowSize";
 import { primaryFontColor, secondaryColor } from "../theme";
 import Unauthorized from "@/components/unauthorized";
@@ -26,7 +26,7 @@ const Dashboard = () => {
 
     return (
         <Box>
-            {isSessionExpired ? (
+            {status === "unauthenticated" || isSessionExpired ? (
                 <Unauthorized />
             ) : (
 

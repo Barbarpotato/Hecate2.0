@@ -33,7 +33,6 @@ const LoginPage = () => {
             })
             setLoginData({ email: "", password: "" });
             setIsLoading(false);
-            window.location.href = "/dashboard";
         } catch (error) {
             toast({
                 title: `${error}`,
