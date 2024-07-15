@@ -1,12 +1,14 @@
+"use client";
 import { useState, useEffect } from 'react';
 
 function useWindowSize() {
     const [windowSize, setWindowSize] = useState({
-        width: window.innerWidth,
-        height: window.innerHeight
+        width: undefined,
+        height: undefined
     });
 
     useEffect(() => {
+        // Handler to call on window resize
         const handleResize = () => {
             setWindowSize({
                 width: window.innerWidth,
@@ -14,13 +16,15 @@ function useWindowSize() {
             });
         };
 
-        window.addEventListener('resize', handleResize);
+        // Add event listener if window is defined (client-side only)
+        if (typeof window !== 'undefined') {
+            handleResize(); // Set initial size
+            window.addEventListener('resize', handleResize);
 
-        // Membersihkan event listener saat komponen dilepas (unmounted)
-        return () => {
-            window.removeEventListener('resize', handleResize);
-        };
-    }, [windowSize]); // Efek hanya dijalankan sekali pada saat awal mount
+            // Clean up event listener on component unmount
+            return () => window.removeEventListener('resize', handleResize);
+        }
+    }, []); // Empty array ensures this effect is only run on mount and unmount
 
     return windowSize;
 }
