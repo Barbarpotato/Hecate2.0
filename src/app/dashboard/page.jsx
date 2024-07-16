@@ -1,11 +1,12 @@
 "use client";
-import Link from "next/link";
 import { useSession } from "next-auth/react";
 import useWindowSize from "@/hooks/useWindowSize";
 import { primaryFontColor, secondaryColor } from "../theme";
 import Unauthorized from "@/components/unauthorized";
 import { Box, Heading } from "@chakra-ui/react";
 import { Fragment } from "react";
+import Typewriter from "@/components/typewriter";
+import Loading from "@/components/loading";
 
 const Dashboard = () => {
 
@@ -14,7 +15,7 @@ const Dashboard = () => {
     const { data: session, status } = useSession();
 
     if (status === "loading") {
-        return <div>Loading...</div>;
+        return <Loading />;
     }
 
     if (!session) {
@@ -29,25 +30,28 @@ const Dashboard = () => {
             {status === "unauthenticated" || isSessionExpired ? (
                 <Unauthorized />
             ) : (
+                <Fragment>
+                    <Box textAlign="center" paddingX={4}>
+                        <Heading
+                            fontSize={width >= 500 ? '4rem' : '2rem'}
+                            pb={2} pt={12}
+                            color={secondaryColor}
+                        >
+                            Welcome Back <span className="ternaryColor" style={{ fontStyle: 'italic', fontWeight: 'bold' }}>Darmawan</span>
+                        </Heading>
 
-                <Box textAlign="center" paddingX={4}>
-                    <Heading
-                        fontSize={width >= 500 ? '4rem' : '2rem'}
-                        pb={2} pt={12}
-                        color={secondaryColor}
-                    >
-                        Welcome Back <span className="ternaryColor" style={{ fontStyle: 'italic', fontWeight: 'bold' }}>Darmawan</span>
-                    </Heading>
+                        <Heading
+                            fontSize={width >= 500 ? '2rem' : '1.5rem'}
+                            py={2}
+                            color={primaryFontColor}
+                        >
+                            Manage Your Portofolio Content With <span className="ternaryColor" style={{ fontWeight: 'bold' }}>Dynamic!</span>
+                        </Heading>
+                    </Box>
 
-                    <Heading
-                        fontSize={width >= 500 ? '2rem' : '1.5rem'}
-                        py={2}
-                        color={primaryFontColor}
-                    >
-                        Manage Your Portfolio Content With <span className="ternaryColor" style={{ fontWeight: 'bold' }}>Dynamic!</span>
-                    </Heading>
+                    <Typewriter />
 
-                </Box>
+                </Fragment>
             )}
         </Box >
     );
