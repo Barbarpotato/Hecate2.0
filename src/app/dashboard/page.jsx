@@ -1,10 +1,11 @@
 "use client";
 import { useSession } from "next-auth/react";
 import useWindowSize from "@/hooks/useWindowSize";
-import { primaryFontColor, secondaryColor } from "../theme";
+import { primaryFontColor, secondaryColor } from "../theme/globalTheme";
 import Unauthorized from "@/components/unauthorized";
-import { Box, Heading } from "@chakra-ui/react";
-import { Fragment } from "react";
+import { Box, Heading, useDisclosure } from "@chakra-ui/react";
+import BasicAuthModal from "@/components/basic-auth-modal";
+import { Fragment, useState } from "react";
 import Typewriter from "@/components/typewriter";
 import Loading from "@/components/loading";
 
@@ -13,6 +14,12 @@ const Dashboard = () => {
     const { width } = useWindowSize();
 
     const { data: session, status } = useSession();
+
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+
+    // ** modal functionality
+    const { isOpen, onOpen, onClose } = useDisclosure()
 
     if (status === "loading") {
         return <Loading />;
@@ -31,6 +38,9 @@ const Dashboard = () => {
                 <Unauthorized />
             ) : (
                 <Fragment>
+                    <BasicAuthModal onOpen={onOpen} isOpen={isOpen} onClose={onClose}
+                        username={username} password={password}
+                        setUsername={setUsername} setPassword={setPassword} />
                     <Box textAlign="center" paddingX={4}>
                         <Heading
                             fontSize={width >= 500 ? '4rem' : '2rem'}
@@ -49,7 +59,8 @@ const Dashboard = () => {
                         </Heading>
                     </Box>
 
-                    <Typewriter />
+                    <Typewriter username={username} password={password}
+                        onOpenModalAuth={onOpen} />
 
                 </Fragment>
             )}

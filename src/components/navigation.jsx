@@ -17,11 +17,9 @@ const items = [
 
 function Navigation() {
 
-    const { data: session, status } = useSession();
+    const { data: session } = useSession();
 
     const currentPath = usePathname();
-
-    console.log(status)
 
     return (
         <Flex paddingY={2}>

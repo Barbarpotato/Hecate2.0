@@ -3,7 +3,7 @@ import { Box, Button, Flex, Heading, Input, Text, useToast } from "@chakra-ui/re
 import { signIn } from "next-auth/react";
 import { Fragment, useState } from "react";
 import useWindowSize from "@/hooks/useWindowSize";
-import { ternaryColor } from "../theme";
+import { ternaryColor } from "../theme/globalTheme";
 
 const LoginPage = () => {
 

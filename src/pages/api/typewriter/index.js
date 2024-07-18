@@ -30,8 +30,17 @@ const handler = async (req, res) => {
             console.error(error);
             return res.status(500).json({ error: 'Error creating post' });
         }
+    } else if (req.method === 'GET') {
+        try {
+            // Get all data from db
+            const posts = await prisma.typewriter.findMany();
+            return res.status(200).json(posts);
+        } catch (error) {
+            console.error(error);
+            return res.status(500).json({ error: 'Error retrieving posts' });
+        }
     } else {
-        res.setHeader('Allow', ['POST']);
+        res.setHeader('Allow', ['POST', 'GET']);
         return res.status(405).end(`Method ${req.method} Not Allowed`);
     }
 };

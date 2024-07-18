@@ -4,7 +4,7 @@ import { Box, Heading } from '@chakra-ui/react';
 import Link from "next/link";
 import useWindowSize from "@/hooks/useWindowSize";
 import React, { Fragment } from 'react'
-import { secondaryColor, ternaryColor } from '@/app/theme';
+import { secondaryColor, ternaryColor } from '@/app/theme/globalTheme';
 
 function Unauthorized() {
 

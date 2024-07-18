@@ -4,7 +4,7 @@ import styles from "../styles/page.module.css";
 import { Box, Button, Flex, Heading, Text } from '@chakra-ui/react';
 import useWindowSize from '@/hooks/useWindowSize';
 import { Fragment } from 'react';
-import { primaryFontColor, secondaryColor } from './theme';
+import { primaryFontColor, secondaryColor } from './theme/globalTheme';
 import CustomAccordion from '@/components/accordion';
 
 const AccordionItem = [
