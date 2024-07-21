@@ -8,6 +8,7 @@ import BasicAuthModal from "@/components/basic-auth-modal";
 import { Fragment, useState } from "react";
 import Typewriter from "@/components/typewriter";
 import Loading from "@/components/loading";
+import Aboutme from "@/components/aboutme";
 
 const Dashboard = () => {
 
@@ -59,8 +60,9 @@ const Dashboard = () => {
                         </Heading>
                     </Box>
 
-                    <Typewriter username={username} password={password}
-                        onOpenModalAuth={onOpen} />
+                    <Typewriter onOpenModalAuth={onOpen} />
+
+                    <Aboutme onOpenModalAuth={onOpen} />
 
                 </Fragment>
             )}

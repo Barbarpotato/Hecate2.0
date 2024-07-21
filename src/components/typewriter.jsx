@@ -27,8 +27,7 @@ function Typewriter({ onOpenModalAuth }) {
     const [typeWriterTitle, setTypeWriterTitle] = useState("");
 
     // ** loading state stuff
-    const [isLoadingPost, setIsLoadingPost] = useState(false);
-    const [isLoadingDelete, setIsLoadingDelete] = useState(false);
+    const [isLoading, setisLoading] = useState(false);
 
     // ** width management for responsive
     const { width } = useWindowSize();
@@ -69,17 +68,21 @@ function Typewriter({ onOpenModalAuth }) {
         })
         setTypeWriterTitle('');
         refetch();
-        setIsLoadingDelete(false);
-        setIsLoadingPost(false);
+        setisLoading(false);
     }
 
     const handlePostData = async () => {
         try {
-            setIsLoadingPost(true);
+            setisLoading(true);
 
             const [username, password] = handleAuthInfo();
 
             const encodedCredentials = btoa(`${username}:${password}`);
+
+            if (typeWriterTitle === '') {
+                cleanStateOperation('Title cannot be empty.', 'error');
+                return;
+            }
 
             const response = await fetch('/api/typewriter', {
                 method: 'POST',
@@ -92,6 +95,7 @@ function Typewriter({ onOpenModalAuth }) {
 
             if (response.ok) {
                 cleanStateOperation('201: Successfully created data.', 'success');
+                return;
             }
             else cleanStateOperation('Failed to create data.', 'error');
 
@@ -103,7 +107,7 @@ function Typewriter({ onOpenModalAuth }) {
 
     const handleDeleteData = async (id) => {
         try {
-            setIsLoadingDelete(true);
+            setisLoading(true);
 
             const [username, password] = handleAuthInfo();
 
@@ -130,16 +134,16 @@ function Typewriter({ onOpenModalAuth }) {
 
     return (
         <Fragment>
-            {/* // ** DESKTOP TO TABLET SCREEN SIZE  */}
+            {/* // ** MOBILE SCREEN SIZE */}
             {
                 width <= 1024 && (
                     <Box paddingX={4}>
-                        <Heading textAlign={"center"} marginY={"30px"} opacity={0.8} color={primaryFontColor}><span style={{ color: 'rgba(134, 107, 171, 0.8)' }}>{"<"}
-                        </span>Typewriter Content<span style={{ color: 'rgba(134, 107, 171, 0.8)' }}>{'>'}</span>
+                        <Heading textAlign={"center"} marginTop={"90px"} marginBottom={"30px"} opacity={0.8} color={primaryFontColor}><span style={{ color: 'rgba(134, 107, 171, 0.8)' }}>{"<"}
+                        </span>Typewriter<span style={{ color: 'rgba(134, 107, 171, 0.8)' }}>{'>'}</span>
                         </Heading>
                         <Image
                             src="/typewriter.png"
-                            alt="My Image"
+                            alt="Typewriter Content"
                             width={width / 1.02}
                             height={300}
                         />
@@ -155,7 +159,7 @@ function Typewriter({ onOpenModalAuth }) {
                                         {data.typewriters.map((typewriter) => (
                                             <ListItem paddingY={2} key={typewriter.id}>{typewriter.title}
                                                 <Button onClick={() => handleAuthAction(() => handleDeleteData(typewriter.id))}
-                                                    isLoading={isLoadingDelete}
+                                                    isLoading={isLoading}
                                                     variant={'outline'} colorScheme={'red'} size={'sm'}>
                                                     Delete
                                                 </Button>
@@ -172,17 +176,17 @@ function Typewriter({ onOpenModalAuth }) {
                                         colorScheme='purple' borderColor={"#536189"} focusBorderColor={ternaryColor}
                                         type="text"
                                     />
-                                    <Button onClick={() => handleAuthAction(() => handlePostData())} isLoading={isLoadingPost} my={3} fontWeight={'bold'} colorScheme='purple' color={'black'}>Add +</Button>
+                                    <Button onClick={() => handleAuthAction(() => handlePostData())} isLoading={isLoading} my={3} fontWeight={'bold'} colorScheme='purple' color={'black'}>Add +</Button>
                                 </TabPanel>
                             </TabPanels>
                         </Tabs>
                     </Box>
                 )}
 
-            {/* // ** MOBILE SCREEN SIZE  */}
+            {/* // ** DESKTOP TO TABLET SCREEN SIZE  */}
             {width > 1024 && (
                 <Fragment>
-                    <Heading textAlign={"center"} marginY={"30px"} opacity={0.8} color={primaryFontColor}><span style={{ color: 'rgba(134, 107, 171, 0.8)' }}>{"<"}
+                    <Heading textAlign={"center"} marginTop={"90px"} marginBottom={"30px"} opacity={0.8} color={primaryFontColor}><span style={{ color: 'rgba(134, 107, 171, 0.8)' }}>{"<"}
                     </span>Typewriter Content<span style={{ color: 'rgba(134, 107, 171, 0.8)' }}>{'>'}</span>
                     </Heading>
                     <Flex justifyContent={'center'}>
@@ -204,7 +208,7 @@ function Typewriter({ onOpenModalAuth }) {
                                         {data.typewriters.map((typewriter) => (
                                             <ListItem paddingY={2} key={typewriter.id}>{typewriter.title}
                                                 <Button onClick={() => handleAuthAction(() => handleDeleteData(typewriter.id))}
-                                                    isLoading={isLoadingDelete}
+                                                    isLoading={isLoading}
                                                     ml={2} variant={'outline'} colorScheme={'red'} size={'sm'}>
                                                     Delete
                                                 </Button>
@@ -221,7 +225,7 @@ function Typewriter({ onOpenModalAuth }) {
                                         colorScheme='purple' borderColor={"#536189"} focusBorderColor={ternaryColor}
                                         type="text"
                                     />
-                                    <Button onClick={() => handleAuthAction(() => handlePostData())} isLoading={isLoadingPost} my={3} fontWeight={'bold'} colorScheme='purple' color={'black'}>Add +</Button>
+                                    <Button onClick={() => handleAuthAction(() => handlePostData())} isLoading={isLoading} my={3} fontWeight={'bold'} colorScheme='purple' color={'black'}>Add +</Button>
                                 </TabPanel>
                             </TabPanels>
                         </Tabs>

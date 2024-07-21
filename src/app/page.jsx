@@ -12,6 +12,11 @@ const AccordionItem = [
     id: "typewriterList",
     title: "/api/typewriter",
     content: "Showing List of Typewriter To be shown in the Hero Landing Page. This Endpoint Can be access via GET, POST & DELETE Method Only."
+  },
+  {
+    id: "aboutme",
+    title: "/api/aboutme",
+    content: "Showing Aboutme content. This Endpoint Can be access via GET & UPDATE Method Only."
   }
 ]
 

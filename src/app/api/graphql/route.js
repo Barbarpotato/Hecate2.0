@@ -9,8 +9,14 @@ const typeDefs = gql`
         title: String
     }
 
+    type Aboutme{
+        id: Int
+        content: String
+    }
+
     type Query {
-        typewriters: [Typewriter]
+        typewriters: [Typewriter],
+        aboutme: [Aboutme]
     }
 `;
 
@@ -20,6 +26,10 @@ const resolvers = {
             // Check if user is authenticated
             return await prisma.typewriter.findMany();
         },
+        aboutme: async () => {
+            // Check if user is authenticated
+            return await prisma.aboutme.findMany();
+        }
     },
 };
 
