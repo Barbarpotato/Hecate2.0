@@ -17,6 +17,11 @@ const AccordionItem = [
     id: "aboutme",
     title: "/api/aboutme",
     content: "Showing Aboutme content. This Endpoint Can be access via GET & UPDATE Method Only."
+  },
+  {
+    id: "project",
+    title: "/api/project",
+    content: "Showing List of Project Content. This Endpoint Can be access via GET, POST & DELETE Method Only."
   }
 ]
 
