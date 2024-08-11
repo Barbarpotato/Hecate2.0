@@ -9,7 +9,7 @@ function BasicAuthModal({ isOpen, onClose, username, password, setUsername, setP
     const handleSave = () => {
         sessionStorage.setItem("basic_auth", JSON.stringify({ is_valid: true, username, password }));
         onClose();
-    }   
+    }
 
     return (
         <>
@@ -36,7 +36,7 @@ function BasicAuthModal({ isOpen, onClose, username, password, setUsername, setP
                             placeholder="Password"
                             borderRadius={'2xl'} my={1} size={'lg'} borderWidth={3}
                             colorScheme='purple' borderColor={"#536189"} focusBorderColor={ternaryColor}
-                            type="text"
+                            type="password"
                         />
 
                     </ModalBody>

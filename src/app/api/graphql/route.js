@@ -14,9 +14,18 @@ const typeDefs = gql`
         content: String
     }
 
+    type Project{
+        id: Int
+        heading: String
+        text: String
+        imageUrl: String
+        skillsUrl: String
+    }
+
     type Query {
         typewriters: [Typewriter],
-        aboutme: [Aboutme]
+        aboutme: [Aboutme],
+        projects: [Project]
     }
 `;
 
@@ -29,6 +38,10 @@ const resolvers = {
         aboutme: async () => {
             // Check if user is authenticated
             return await prisma.aboutme.findMany();
+        },
+        projects: async () => {
+            // Check if user is authenticated
+            return await prisma.project.findMany();
         }
     },
 };

@@ -92,7 +92,7 @@ export default function Home() {
             </Box>
             <Box>
               <Heading style={{ fontSize: width >= 500 ? '4rem' : '2rem' }} py={2} color={secondaryColor}>Welcome To <span className='ternaryColor' style={{ fontStyle: 'italic', fontWeight: 'bold' }}>Hecate</span></Heading>
-              <Text style={{ fontSize: width >= 500 ? '2rem' : '1.5rem' }} color={primaryFontColor}>
+              <Text style={{ fontSize: width >= 500 ? '2rem' : '1.5rem' }} width={"90%"} color={primaryFontColor}>
                 A Fullstack Application Used For Managing My Personal Portofolio Website Content.
               </Text>
               <Button onClick={() => window.open('https://barbarpotato.github.io/', '_blank')} size={width >= 500 ? 'lg' : 'sm'} my={3} mx={2} fontWeight={'bold'} colorScheme='purple' color={'black'}>Visit My Portofolio Website</Button>

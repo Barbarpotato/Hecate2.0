@@ -35,3 +35,11 @@ model Aboutme {
   content    String   @db.LongText
   changeDate DateTime @default(now())
 }
+
+model Project {
+  id        Int    @id @default(autoincrement())
+  heading   String
+  text      String
+  imageUrl  String
+  skillsUrl String
+}

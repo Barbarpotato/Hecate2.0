@@ -67,7 +67,6 @@ function Aboutme({ onOpenModalAuth }) {
 
     const handleUpdateData = async (id) => {
         try {
-            console.log(content)
             setIsLoading(true);
 
             const [username, password] = handleAuthInfo();

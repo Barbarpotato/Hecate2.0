@@ -9,6 +9,7 @@ import { Fragment, useState } from "react";
 import Typewriter from "@/components/typewriter";
 import Loading from "@/components/loading";
 import Aboutme from "@/components/aboutme";
+import Project from "@/components/project";
 
 const Dashboard = () => {
 
@@ -63,6 +64,8 @@ const Dashboard = () => {
                     <Typewriter onOpenModalAuth={onOpen} />
 
                     <Aboutme onOpenModalAuth={onOpen} />
+
+                    <Project onOpenModalAuth={onOpen} />
 
                 </Fragment>
             )}
