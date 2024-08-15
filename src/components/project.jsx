@@ -162,7 +162,7 @@ function Project({ onOpenModalAuth }) {
                                     <TableContainer>
                                         <Table>
                                             <Thead>
-                                                <Th>No #</Th>
+                                                <Th>ID #</Th>
                                                 <Th>Heading</Th>
                                                 <Th>Text</Th>
                                                 <Th>Action</Th>
@@ -171,7 +171,7 @@ function Project({ onOpenModalAuth }) {
                                                 {data.projects.map((object, index) => (
                                                     <Tr key={object.id}>
                                                         <Td>
-                                                            <Text>{index + 1}</Text>
+                                                            <Text>{object.id}</Text>
                                                         </Td>
                                                         <Td paddingY={2} >
                                                             <Text>{object.heading}</Text>
@@ -256,7 +256,7 @@ function Project({ onOpenModalAuth }) {
                                     <TableContainer>
                                         <Table>
                                             <Thead>
-                                                <Th>No #</Th>
+                                                <Th>ID #</Th>
                                                 <Th>Heading</Th>
                                                 <Th>Text</Th>
                                                 <Th>Action</Th>
@@ -265,7 +265,7 @@ function Project({ onOpenModalAuth }) {
                                                 {data.projects.map((object, index) => (
                                                     <Tr key={object.id}>
                                                         <Td>
-                                                            <Text>{index + 1}</Text>
+                                                            <Text>{object.id}</Text>
                                                         </Td>
                                                         <Td paddingY={2} >
                                                             <Text>{object.heading}</Text>

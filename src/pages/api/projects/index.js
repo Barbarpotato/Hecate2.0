@@ -46,7 +46,9 @@ const postHandler = async (req, res) => {
                 heading: body.heading,
                 text: body.text,
                 imageUrl: body.imageUrl,
-                skillsUrl: body.skillsUrl
+                skillsUrl: body.skillsUrl,
+                htmlContent: body.htmlContent,
+                htmlImage: body.htmlImage
             },
         });
         return res.status(201).json({ message: 'Successfully created Project Data', post });

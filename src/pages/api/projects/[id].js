@@ -23,7 +23,30 @@ const handler = async (req, res) => {
         } catch (error) {
             res.status(500).json({ error: 'Failed to delete project' });
         }
-    } else {
+    } else if (req.method === 'PUT') {
+        try {
+            const { htmlContent, htmlImage } = req.body;
+
+            if (!htmlContent || !htmlImage) {
+                return res.status(400).json({ error: 'Missing required fields' });
+            }
+
+            const projectDetail = await prisma.project.update({
+                where: {
+                    id: parseInt(id),
+                },
+                data: {
+                    htmlContent: htmlContent,
+                    htmlImage: htmlImage
+                },
+            });
+
+            res.status(200).json(projectDetail);
+        } catch (error) {
+            res.status(500).json({ error: 'Failed to update Project entry' });
+        }
+    }
+    else {
         res.setHeader('Allow', ['DELETE']);
         res.status(405).end(`Method ${req.method} Not Allowed`);
     }

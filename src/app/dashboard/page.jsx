@@ -10,6 +10,7 @@ import Typewriter from "@/components/typewriter";
 import Loading from "@/components/loading";
 import Aboutme from "@/components/aboutme";
 import Project from "@/components/project";
+import ProjectDetail from "@/components/project-detail";
 
 const Dashboard = () => {
 
@@ -66,6 +67,8 @@ const Dashboard = () => {
                     <Aboutme onOpenModalAuth={onOpen} />
 
                     <Project onOpenModalAuth={onOpen} />
+
+                    <ProjectDetail onOpenModalAuth={onOpen} />
 
                 </Fragment>
             )}

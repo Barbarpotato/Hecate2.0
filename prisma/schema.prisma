@@ -37,9 +37,11 @@ model Aboutme {
 }
 
 model Project {
-  id        Int    @id @default(autoincrement())
-  heading   String
-  text      String
-  imageUrl  String
-  skillsUrl String
+  id          Int     @id @default(autoincrement())
+  heading     String
+  text        String
+  imageUrl    String
+  skillsUrl   String
+  htmlContent String? @db.LongText
+  htmlImage   String? @db.LongText
 }
