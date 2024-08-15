@@ -2,10 +2,12 @@ import {
     Box, Button, Heading, Step, StepDescription, Textarea,
     StepIcon, StepIndicator, StepNumber, StepSeparator,
     StepStatus, StepTitle, Stepper, useSteps,
-    Input, useToast
+    Input, useToast,
+    Flex,
+    Spacer
 } from '@chakra-ui/react';
 import { ternaryColor } from '@/app/theme/globalTheme';
-import { useState } from 'react';
+import { Fragment, useState } from 'react';
 import useWindowSize from '@/hooks/useWindowSize';
 import Loading from './loading';
 
@@ -117,95 +119,104 @@ function ProjectDetail({ onOpenModalAuth }) {
                 <span style={{ color: 'rgba(134, 107, 171, 0.8)' }}>{'>'}</span>
             </Heading>
 
-            {width > 720 ? (
-                <Stepper colorScheme={"purple"} index={activeStep}>
-                    {steps.map((step, index) => (
-                        <Step key={index}>
-                            <StepIndicator>
-                                <StepStatus
-                                    complete={<StepIcon />}
-                                    incomplete={<StepNumber />}
-                                    active={<StepNumber />}
-                                />
-                            </StepIndicator>
+            <Box boxShadow={"2xl"} borderRadius={"2xl"} padding={5}>
+                {width > 720 ? (
+                    <Stepper my={10} colorScheme={"purple"} index={activeStep}>
+                        {steps.map((step, index) => (
+                            <Step key={index}>
+                                <StepIndicator>
+                                    <StepStatus
+                                        complete={<StepIcon />}
+                                        incomplete={<StepNumber />}
+                                        active={<StepNumber />}
+                                    />
+                                </StepIndicator>
 
-                            <Box flexShrink='0'>
-                                <StepTitle>{step.title}</StepTitle>
-                                <StepDescription>{step.description}</StepDescription>
-                            </Box>
+                                <Box flexShrink='0'>
+                                    <StepTitle>{step.title}</StepTitle>
+                                    <StepDescription>{step.description}</StepDescription>
+                                </Box>
 
-                            <StepSeparator />
-                        </Step>
-                    ))}
-                </Stepper>
-            ) :
-                (
-                    <Heading opacity={0.7} size={'md'}>
-                        Update Your Project Detail:
-                    </Heading>
-                )}
+                                <StepSeparator />
+                            </Step>
+                        ))}
+                    </Stepper>
+                ) :
+                    (
+                        <Heading opacity={0.7} size={'md'}>
+                            Update Your Project Detail:
+                        </Heading>
+                    )}
 
-            {
-                activeStep == 1 && (
-                    <Box>
-                        <Input
-                            type="number"
-                            value={projectID} onChange={(e) => setProjectID(e.target.value)}
-                            placeholder="Your Project ID..."
-                            borderRadius={'2xl'} my={1} size={'lg'} borderWidth={3}
-                            colorScheme='purple' borderColor={"#536189"} focusBorderColor={ternaryColor}
-                        />
-                    </Box>
-                )
-            }
+                {
+                    activeStep == 1 && (
+                        <Box>
+                            <Input
+                                type="number"
+                                value={projectID} onChange={(e) => setProjectID(e.target.value)}
+                                placeholder="Your Project ID..."
+                                borderRadius={'2xl'} my={1} size={'lg'} borderWidth={3}
+                                colorScheme='purple' borderColor={"#536189"} focusBorderColor={ternaryColor}
+                            />
+                        </Box>
+                    )
+                }
 
-            {
-                activeStep == 2 && (
-                    <Box>
-                        <Textarea
-                            rows={6}
-                            value={htmlContent} onChange={(e) => setHtmlContent(e.target.value)}
-                            placeholder="Your Project Description..."
-                            borderRadius={'2xl'} my={1} size={'lg'} borderWidth={3}
-                            colorScheme='purple' borderColor={"#536189"} focusBorderColor={ternaryColor}
-                            type="text" />
-                    </Box>
-                )
-            }
+                {
+                    activeStep == 2 && (
+                        <Box>
+                            <Textarea
+                                rows={6}
+                                value={htmlContent} onChange={(e) => setHtmlContent(e.target.value)}
+                                placeholder="Your Project Description..."
+                                borderRadius={'2xl'} my={1} size={'lg'} borderWidth={3}
+                                colorScheme='purple' borderColor={"#536189"} focusBorderColor={ternaryColor}
+                                type="text" />
+                        </Box>
+                    )
+                }
 
-            {
-                activeStep == 3 && (
-                    <Box>
-                        <Textarea
-                            rows={6}
-                            value={imageContent} onChange={(e) => setImageContent(e.target.value)}
-                            placeholder="Example: <img src='your image url here' />"
-                            borderRadius={'2xl'} my={1} size={'lg'} borderWidth={3}
-                            colorScheme='purple' borderColor={"#536189"} focusBorderColor={ternaryColor}
-                            type="text" />
-                    </Box>
-                )
-            }
+                {
+                    activeStep == 3 && (
+                        <Box>
+                            <Textarea
+                                rows={6}
+                                value={imageContent} onChange={(e) => setImageContent(e.target.value)}
+                                placeholder="Example: <img src='your image url here' />"
+                                borderRadius={'2xl'} my={1} size={'lg'} borderWidth={3}
+                                colorScheme='purple' borderColor={"#536189"} focusBorderColor={ternaryColor}
+                                type="text" />
+                        </Box>
+                    )
+                }
 
+                <Flex width={"100%"}>
+                    {activeStep > 1 && (
+                        <Fragment>
+                            <Button
+                                isLoading={isLoading}
+                                size={'sm'} mt={3} mr={2} colorScheme={'purple'} onClick={() => setActiveStep((index) => index - 1)}>⬅️ Previous Step</Button>
+                            <Spacer />
+                        </Fragment>
+                    )}
+                    {activeStep < 3 && (
+                        <Fragment>
+                            <Spacer />
+                            <Button
+                                isLoading={isLoading}
+                                size={'sm'} mt={3} colorScheme={'purple'} onClick={() => setActiveStep((index) => index + 1)}>Next Step ➡️</Button>
+                        </Fragment>
+                    )}
 
-            {activeStep > 1 && (
-                <Button
-                    isLoading={isLoading}
-                    size={'sm'} mt={3} mr={2} colorScheme={'purple'} onClick={() => setActiveStep((index) => index - 1)}>⬅️ Previous Step</Button>
-            )}
+                    {activeStep == 3 && (
+                        <Button size={'sm'}
+                            isLoading={isLoading}
+                            mt={3} colorScheme={'green'}
+                            onClick={() => handleAuthAction(() => handleUpdateProjectDetailData())}>Update Project Detail</Button>
+                    )}
+                </Flex>
+            </Box>
 
-            {activeStep < 3 && (
-                <Button
-                    isLoading={isLoading}
-                    size={'sm'} mt={3} colorScheme={'purple'} onClick={() => setActiveStep((index) => index + 1)}>Next Step ➡️</Button>
-            )}
-
-            {activeStep == 3 && (
-                <Button size={'sm'}
-                    isLoading={isLoading}
-                    mt={3} colorScheme={'green'}
-                    onClick={() => handleAuthAction(() => handleUpdateProjectDetailData())}>Update Project Detail</Button>
-            )}
         </Box>
     );
 }
