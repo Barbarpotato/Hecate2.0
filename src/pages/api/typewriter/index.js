@@ -1,5 +1,6 @@
-import prisma from "@/app/libs/prisma";
+import { db } from '../../../../firebase';
 import { isAuthenticated } from '@/app/libs/auth';
+import admin from 'firebase-admin';
 
 const withMiddleware = (handler) => async (req, res) => {
     if (!isAuthenticated(req)) {
@@ -17,13 +18,13 @@ const postHandler = async (req, res) => {
     }
 
     try {
-        // Insert data into db
-        const post = await prisma.typewriter.create({
-            data: {
-                title: body.title,
-                created: new Date(),
-            },
+        // Insert data into Firestore
+        const postRef = await db.collection('typewriter').add({
+            title: body.title,
+            created: admin.firestore.Timestamp.fromDate(new Date()),
         });
+
+        const post = { id: postRef.id }; // Include the generated ID
         return res.status(201).json({ message: 'Successfully created Typewriter Data', post });
     } catch (error) {
         console.error(error);
@@ -33,8 +34,10 @@ const postHandler = async (req, res) => {
 
 const getHandler = async (req, res) => {
     try {
-        // Get all data from db
-        const posts = await prisma.typewriter.findMany();
+        // Get all data from Firestore
+        const snapshot = await db.collection('typewriter').get();
+        const posts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
         return res.status(200).json(posts);
     } catch (error) {
         console.error(error);

@@ -48,6 +48,7 @@ const LoginPage = () => {
             }
             setIsLoading(false);
         } catch (error) {
+            console.log(error)
             toast({
                 title: `${error}`,
                 status: 'error',

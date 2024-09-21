@@ -152,7 +152,6 @@ function ProjectDetail({ onOpenModalAuth }) {
                     activeStep == 1 && (
                         <Box>
                             <Input
-                                type="number"
                                 value={projectID} onChange={(e) => setProjectID(e.target.value)}
                                 placeholder="Your Project ID..."
                                 borderRadius={'2xl'} my={1} size={'lg'} borderWidth={3}

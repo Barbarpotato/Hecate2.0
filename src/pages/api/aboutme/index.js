@@ -1,9 +1,14 @@
-import prisma from "@/app/libs/prisma";
+// pages/api/aboutme/index.js
+import { db } from "../../../../firebase";// Adjust the path to your Firebase Admin setup
 
 const getHandler = async (req, res) => {
     try {
-        // Get all data from db
-        const posts = await prisma.Aboutme.findMany();
+        // Get all data from Firestore
+        const snapshot = await db.collection('aboutme').get();
+        const posts = snapshot.docs.map(doc => ({
+            id: doc.id,      // Include the document ID
+            ...doc.data()    // Spread the document data
+        }));
         return res.status(200).json(posts);
     } catch (error) {
         console.error(error);
