@@ -1,5 +1,4 @@
-// pages/api/aboutme/[id].jsx
-import prisma from "@/app/libs/prisma";
+import { db } from '../../../../firebase';
 import { isAuthenticated } from '@/app/libs/auth';
 
 const withMiddleware = (handler) => async (req, res) => {
@@ -9,9 +8,8 @@ const withMiddleware = (handler) => async (req, res) => {
     return handler(req, res);
 };
 
-
 const handler = async (req, res) => {
-    const { id } = req.query;
+    const { id } = req.query; // Get the document ID from the query parameters
 
     if (req.method === 'PUT') {
         try {
@@ -22,19 +20,24 @@ const handler = async (req, res) => {
                 return res.status(400).json({ error: 'Content is required' });
             }
 
-            // Perform the update
-            const typewriter = await prisma.aboutme.update({
-                where: {
-                    id: parseInt(id),
-                },
-                data: {
-                    content, // Include the data to be updated
-                },
+            // Perform the update in Firestore
+            const typewriterRef = db.collection('aboutme').doc(id); // Reference to the document
+            const doc = await typewriterRef.get();
+
+            if (!doc.exists) {
+                return res.status(404).json({ error: 'No such document' });
+            }
+
+            // Update the document
+            await typewriterRef.update({
+                content, // Include the data to be updated
             });
 
-            res.status(200).json(typewriter);
+            const updatedDoc = await typewriterRef.get(); // Get the updated document
+            res.status(200).json({ id: updatedDoc.id, ...updatedDoc.data() }); // Return the updated document
         } catch (error) {
-            res.status(500).json({ error: 'Failed to update Aboutme entry' });
+            console.error(error);
+            res.status(500).json({ error: 'Failed to update About Me entry' });
         }
     } else {
         res.setHeader('Allow', ['PUT']); // Adjust allowed methods

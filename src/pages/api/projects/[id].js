@@ -1,5 +1,5 @@
-// pages/api/typewriter/[id].jsx
-import prisma from "@/app/libs/prisma";
+// pages/api/typewriter/[id].js
+import { db } from '../../../../firebase';
 import { isAuthenticated } from '@/app/libs/auth';
 
 const withMiddleware = (handler) => async (req, res) => {
@@ -14,13 +14,10 @@ const handler = async (req, res) => {
 
     if (req.method === 'DELETE') {
         try {
-            const typewriter = await prisma.project.delete({
-                where: {
-                    id: parseInt(id),
-                },
-            });
-            res.status(200).json(typewriter);
+            await db.collection('projects').doc(id).delete();
+            res.status(200).json({ message: 'Successfully deleted project' });
         } catch (error) {
+            console.error(error);
             res.status(500).json({ error: 'Failed to delete project' });
         }
     } else if (req.method === 'PUT') {
@@ -31,25 +28,22 @@ const handler = async (req, res) => {
                 return res.status(400).json({ error: 'Missing required fields' });
             }
 
-            const projectDetail = await prisma.project.update({
-                where: {
-                    id: parseInt(id),
-                },
-                data: {
-                    htmlContent: htmlContent,
-                    htmlImage: htmlImage
-                },
+            const projectRef = db.collection('projects').doc(id);
+            await projectRef.update({
+                htmlContent: htmlContent,
+                htmlImage: htmlImage,
             });
 
-            res.status(200).json(projectDetail);
+            const updatedProject = await projectRef.get();
+            res.status(200).json({ id: updatedProject.id, ...updatedProject.data() });
         } catch (error) {
+            console.error(error);
             res.status(500).json({ error: 'Failed to update Project entry' });
         }
-    }
-    else {
-        res.setHeader('Allow', ['DELETE']);
+    } else {
+        res.setHeader('Allow', ['DELETE', 'PUT']);
         res.status(405).end(`Method ${req.method} Not Allowed`);
     }
-}
+};
 
 export default withMiddleware(handler);
