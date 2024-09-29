@@ -1,53 +1,72 @@
 "use client";
-import { useSession } from "next-auth/react";
 import useWindowSize from "@/hooks/useWindowSize";
 import { primaryFontColor, secondaryColor } from "../theme/globalTheme";
-import Unauthorized from "@/components/unauthorized";
-import { Box, Heading, useDisclosure } from "@chakra-ui/react";
-import BasicAuthModal from "@/components/basic-auth-modal";
-import { Fragment, useState } from "react";
+import { Box, Heading } from "@chakra-ui/react";
+import { Fragment, useEffect, useState } from "react";
 import Typewriter from "@/components/typewriter";
-import Loading from "@/components/loading";
 import Aboutme from "@/components/aboutme";
 import Project from "@/components/project";
 import ProjectDetail from "@/components/project-detail";
+import Loading from "@/components/loading";
 
 const Dashboard = () => {
 
     const { width } = useWindowSize();
 
-    const { data: session, status } = useSession();
+    const [isSessionExpired, setIsSessionExpired] = useState(true);
 
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
+    // ** Check if session is expired (optional - usually handled by NextAuth)
+    useEffect(() => {
+        const checkAuth = async () => {
 
-    // ** modal functionality
-    const { isOpen, onOpen, onClose } = useDisclosure()
+            const token = localStorage.getItem('token');
 
-    if (status === "loading") {
-        return <Loading />;
-    }
+            if (!token) {
+                window.location.href = '/login';
+                return;
+            }
 
-    if (!session) {
-        return <Unauthorized />
-    }
+            try {
+                const response = await fetch('https://coretify.vercel.app/auth', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ token })
+                });
 
-    // Check if session is expired (optional - usually handled by NextAuth)
-    const isSessionExpired = session?.expires && new Date(session.expires) < new Date();
+                // ** force logout if token is invalid
+                if (!response.ok) {
+                    // Optionally redirect to login if the token is invalid
+                    window.location.href = '/login';
+                    localStorage.removeItem('token');
+                    return;
+                }
+
+                const data = await response.json();
+                if (data?.message === "Token is valid") {
+                    setIsSessionExpired(false);
+                    return;
+                }
+
+            } catch (error) {
+                console.error('Error during fetch:', error);
+            }
+        };
+        checkAuth();
+    }, []);
 
     return (
         <Box>
-            {status === "unauthenticated" || isSessionExpired ? (
-                <Unauthorized />
+            {isSessionExpired ? (
+                <Loading />
             ) : (
                 <Fragment>
-                    <BasicAuthModal onOpen={onOpen} isOpen={isOpen} onClose={onClose}
-                        username={username} password={password}
-                        setUsername={setUsername} setPassword={setPassword} />
                     <Box textAlign="center" paddingX={4}>
                         <Heading
                             fontSize={width >= 500 ? '4rem' : '2rem'}
-                            pb={2} pt={12}
+                            pb={2}
+                            pt={12}
                             color={secondaryColor}
                         >
                             Welcome Back <span className="ternaryColor" style={{ fontStyle: 'italic', fontWeight: 'bold' }}>Darmawan</span>
@@ -58,23 +77,18 @@ const Dashboard = () => {
                             py={2}
                             color={primaryFontColor}
                         >
-                            Manage Your Portofolio Content With <span className="ternaryColor" style={{ fontWeight: 'bold' }}>Dynamic!</span>
+                            Manage Your Portfolio Content With <span className="ternaryColor" style={{ fontWeight: 'bold' }}>Dynamic!</span>
                         </Heading>
                     </Box>
 
-                    <Typewriter onOpenModalAuth={onOpen} />
-
-                    <Aboutme onOpenModalAuth={onOpen} />
-
-                    <Project onOpenModalAuth={onOpen} />
-
-                    <ProjectDetail onOpenModalAuth={onOpen} />
-
+                    <Typewriter />
+                    <Aboutme />
+                    <Project />
+                    <ProjectDetail />
                 </Fragment>
             )}
-        </Box >
+        </Box>
     );
-
 };
 
 export default Dashboard;

@@ -1,5 +1,5 @@
 "use client"
-import { Flex, Heading, Box, Spacer, Divider, Text, Center } from '@chakra-ui/react'
+import { Flex, Heading, Box, Spacer, Divider, Text } from '@chakra-ui/react'
 import { useState, useEffect, Fragment } from 'react'
 import { primaryFontColor, secondaryColor } from '@/app/theme/globalTheme';
 import useWindowSize from '@/hooks/useWindowSize';

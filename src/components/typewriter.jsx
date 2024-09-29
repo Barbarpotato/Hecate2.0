@@ -18,7 +18,7 @@ const GET_TYPERWRITER_DATA = gql`
         }
     }`;
 
-function Typewriter({ onOpenModalAuth }) {
+function Typewriter() {
 
     // ** graphql fetch stuff
     const { loading, error, data, refetch } = useQuery(GET_TYPERWRITER_DATA);
@@ -35,31 +35,7 @@ function Typewriter({ onOpenModalAuth }) {
     // ** toast for notified the status of transaction data
     const toast = useToast();
 
-    const handleAuthInfo = () => {
-        if (sessionStorage.getItem("basic_auth")) {
-            const authInfo = JSON.parse(sessionStorage.getItem("basic_auth"));
-            if (authInfo.is_valid == true && authInfo.username && authInfo.password) {
-                return [authInfo.username, authInfo.password, authInfo.is_valid];
-            } else return ['', '', false];
-        } else return ['', '', false];
-    }
-
-    const handleAuthAction = (func) => {
-        if (sessionStorage.getItem('basic_auth')) {
-            const authInfo = JSON.parse(sessionStorage.getItem('basic_auth'));
-            if (authInfo.is_valid == true) func();
-            else onOpenModalAuth();
-        } else onOpenModalAuth()
-    }
-
-
     const cleanStateOperation = (toastMessage, toastStatus) => {
-        const prevAuthInfo = JSON.parse(sessionStorage.getItem('basic_auth'));
-        if (toastStatus === "success") {
-            sessionStorage.setItem('basic_auth', JSON.stringify({ ...prevAuthInfo, is_valid: true }));
-        } else if (toastStatus === "error") {
-            sessionStorage.setItem('basic_auth', JSON.stringify({ ...prevAuthInfo, is_valid: false }));
-        }
         toast({
             title: toastMessage,
             status: toastStatus,
@@ -75,12 +51,16 @@ function Typewriter({ onOpenModalAuth }) {
         try {
             setisLoading(true);
 
-            const [username, password] = handleAuthInfo();
-
-            const encodedCredentials = btoa(`${username}:${password}`);
-
             if (typeWriterTitle === '') {
                 cleanStateOperation('Title cannot be empty.', 'error');
+                return;
+            }
+
+            const token = localStorage.getItem('token');
+
+            // decline action if token not exist.
+            if (!token) {
+                cleanStateOperation('Failed to create data.', 'error');
                 return;
             }
 
@@ -88,12 +68,12 @@ function Typewriter({ onOpenModalAuth }) {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Basic ${encodedCredentials}`,
+                    'Authorization': token,
                 },
                 body: JSON.stringify({ title: typeWriterTitle }),
             });
 
-            if (response.ok) {
+            if (response.status === 201) {
                 cleanStateOperation('201: Successfully created data.', 'success');
                 return;
             }
@@ -109,20 +89,27 @@ function Typewriter({ onOpenModalAuth }) {
         try {
             setisLoading(true);
 
-            const [username, password] = handleAuthInfo();
+            const token = localStorage.getItem('token');
 
-            const encodedCredentials = btoa(`${username}:${password}`);
+            // decline action if token not exist.
+            if (!token) {
+                cleanStateOperation('Failed to delete data.', 'error');
+                return;
+            }
 
             const response = await fetch(`/api/typewriter/${id}`, {
                 method: 'DELETE',
                 headers: {
-                    'Authorization': `Basic ${encodedCredentials}`,
+                    'Authorization': token,
                 },
             });
-            if (!response.ok) {
-                cleanStateOperation('Failed to delete data.', 'error');
+
+            if (response.status === 204) {
+                cleanStateOperation('204: Successfully delete data.', 'success');
+                return;
             }
-            cleanStateOperation('200: Successfully deleted data.', 'success');
+            else cleanStateOperation('Failed to delete data.', 'error');
+
         } catch (error) {
             console.error(error.message);
             cleanStateOperation('Failed to delete data.', 'error');
@@ -158,7 +145,7 @@ function Typewriter({ onOpenModalAuth }) {
                                     <OrderedList>
                                         {data.typewriters.map((typewriter) => (
                                             <ListItem paddingY={2} key={typewriter.id}>{typewriter.title}
-                                                <Button onClick={() => handleAuthAction(() => handleDeleteData(typewriter.id))}
+                                                <Button onClick={() => handleDeleteData(typewriter.id)}
                                                     isLoading={isLoading}
                                                     variant={'outline'} colorScheme={'red'} size={'sm'}>
                                                     Delete
@@ -176,7 +163,7 @@ function Typewriter({ onOpenModalAuth }) {
                                         colorScheme='purple' borderColor={"#536189"} focusBorderColor={ternaryColor}
                                         type="text"
                                     />
-                                    <Button onClick={() => handleAuthAction(() => handlePostData())} isLoading={isLoading} my={3} fontWeight={'bold'} colorScheme='purple' color={'black'}>Add +</Button>
+                                    <Button onClick={handlePostData} isLoading={isLoading} my={3} fontWeight={'bold'} colorScheme='purple' color={'black'}>Add +</Button>
                                 </TabPanel>
                             </TabPanels>
                         </Tabs>
@@ -207,7 +194,7 @@ function Typewriter({ onOpenModalAuth }) {
                                     <OrderedList>
                                         {data.typewriters.map((typewriter) => (
                                             <ListItem paddingY={2} key={typewriter.id}>{typewriter.title}
-                                                <Button onClick={() => handleAuthAction(() => handleDeleteData(typewriter.id))}
+                                                <Button onClick={() => handleDeleteData(typewriter.id)}
                                                     isLoading={isLoading}
                                                     ml={2} variant={'outline'} colorScheme={'red'} size={'sm'}>
                                                     Delete
@@ -225,7 +212,7 @@ function Typewriter({ onOpenModalAuth }) {
                                         colorScheme='purple' borderColor={"#536189"} focusBorderColor={ternaryColor}
                                         type="text"
                                     />
-                                    <Button onClick={() => handleAuthAction(() => handlePostData())} isLoading={isLoading} my={3} fontWeight={'bold'} colorScheme='purple' color={'black'}>Add +</Button>
+                                    <Button onClick={() => handlePostData()} isLoading={isLoading} my={3} fontWeight={'bold'} colorScheme='purple' color={'black'}>Add +</Button>
                                 </TabPanel>
                             </TabPanels>
                         </Tabs>
