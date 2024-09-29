@@ -1,6 +1,5 @@
 "use client";
 import { Flex, Heading, Spacer } from '@chakra-ui/react';
-import { useSession, signOut } from "next-auth/react";
 import { usePathname } from 'next/navigation'
 import Link from 'next/link'
 
@@ -17,8 +16,6 @@ const items = [
 
 function Navigation() {
 
-    const { data: session } = useSession();
-
     const currentPath = usePathname();
 
     return (
@@ -32,10 +29,6 @@ function Navigation() {
                 </Link>
             ))}
             <Spacer />
-
-            {session && (
-                <Heading style={{ cursor: 'pointer' }} onClick={() => signOut()} _hover={{ textDecoration: 'underline' }} paddingY={2} paddingLeft={2} paddingRight={5} fontSize={'lg'}>Logout</Heading>
-            )}
 
         </Flex>
     )

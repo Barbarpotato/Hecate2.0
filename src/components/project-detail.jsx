@@ -17,7 +17,7 @@ const steps = [
     { title: 'Project Image', description: 'Upload Your Project Image using Link' },
 ]
 
-function ProjectDetail({ onOpenModalAuth }) {
+function ProjectDetail() {
 
     const { width } = useWindowSize()
 
@@ -35,31 +35,7 @@ function ProjectDetail({ onOpenModalAuth }) {
         count: steps.length,
     })
 
-    const handleAuthInfo = () => {
-        if (sessionStorage.getItem("basic_auth")) {
-            const authInfo = JSON.parse(sessionStorage.getItem("basic_auth"));
-            if (authInfo.is_valid == true && authInfo.username && authInfo.password) {
-                return [authInfo.username, authInfo.password, authInfo.is_valid];
-            } else return ['', '', false];
-        } else return ['', '', false];
-    }
-
-
-    const handleAuthAction = (func) => {
-        if (sessionStorage.getItem('basic_auth')) {
-            const authInfo = JSON.parse(sessionStorage.getItem('basic_auth'));
-            if (authInfo.is_valid == true) func();
-            else onOpenModalAuth();
-        } else onOpenModalAuth()
-    }
-
     const cleanStateOperation = (toastMessage, toastStatus) => {
-        const prevAuthInfo = JSON.parse(sessionStorage.getItem('basic_auth'));
-        if (toastStatus === "success") {
-            sessionStorage.setItem('basic_auth', JSON.stringify({ ...prevAuthInfo, is_valid: true }));
-        } else if (toastStatus === "error") {
-            sessionStorage.setItem('basic_auth', JSON.stringify({ ...prevAuthInfo, is_valid: false }));
-        }
         toast({
             title: toastMessage,
             status: toastStatus,
@@ -77,28 +53,32 @@ function ProjectDetail({ onOpenModalAuth }) {
         try {
             setIsLoading(true);
 
-            const [username, password] = handleAuthInfo();
+            const token = localStorage.getItem('token');
 
-            const encodedCredentials = btoa(`${username}:${password}`);
+            // decline action if token not exist.
+            if (!token) {
+                cleanStateOperation('Failed to create data.', 'error');
+                return;
+            }
 
             const response = await fetch(`/api/projects/${projectID}`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
-                    "Authorization": `Basic ${encodedCredentials}`,
+                    "Authorization": token,
                 },
                 body: JSON.stringify({ htmlContent: htmlContent, htmlImage: imageContent }),
             })
 
-            if (!response.ok) {
-                cleanStateOperation('Failed to Add data.', 'error');
+            if (response.status === 200) {
+                cleanStateOperation('200: Successfully update data.', 'success');
                 return;
             }
+            else cleanStateOperation('Failed to update data.', 'error');
 
-            cleanStateOperation('200: Successfully Add data.', 'success');
         } catch (error) {
             console.error(error.message)
-            cleanStateOperation('Failed to Add data.', 'error');
+            cleanStateOperation('Failed to Update data.', 'error');
             return;
         }
     }
@@ -211,7 +191,7 @@ function ProjectDetail({ onOpenModalAuth }) {
                         <Button size={'sm'}
                             isLoading={isLoading}
                             mt={3} colorScheme={'green'}
-                            onClick={() => handleAuthAction(() => handleUpdateProjectDetailData())}>Update Project Detail</Button>
+                            onClick={() => handleUpdateProjectDetailData()}>Update Project Detail</Button>
                     )}
                 </Flex>
             </Box>

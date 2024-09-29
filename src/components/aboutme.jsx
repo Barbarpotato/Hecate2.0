@@ -1,7 +1,7 @@
 "use client"
 import { primaryFontColor, ternaryColor } from '@/app/theme/globalTheme'
 import useWindowSize from '@/hooks/useWindowSize'
-import { Heading, Tabs, Tab, TabList, TabPanels, TabPanel, Textarea, Box, Button, useToast, UnorderedList, ListItem, Text, Flex } from '@chakra-ui/react'
+import { Heading, Tabs, Tab, TabList, TabPanels, TabPanel, Textarea, Box, Button, useToast, UnorderedList, ListItem, Flex } from '@chakra-ui/react'
 import Image from 'next/image'
 import { gql, useQuery } from '@apollo/client';
 import { Fragment, useState } from 'react'
@@ -17,7 +17,7 @@ const GET_ABOUTME_DATA = gql`
     }`;
 
 
-function Aboutme({ onOpenModalAuth }) {
+function Aboutme() {
 
     const { loading, error, data, refetch } = useQuery(GET_ABOUTME_DATA);
 
@@ -30,30 +30,8 @@ function Aboutme({ onOpenModalAuth }) {
     // ** toast for notified the status of transaction data
     const toast = useToast();
 
-    const handleAuthInfo = () => {
-        if (sessionStorage.getItem("basic_auth")) {
-            const authInfo = JSON.parse(sessionStorage.getItem("basic_auth"));
-            if (authInfo.is_valid == true && authInfo.username && authInfo.password) {
-                return [authInfo.username, authInfo.password, authInfo.is_valid];
-            } else return ['', '', false];
-        } else return ['', '', false];
-    }
-
-    const handleAuthAction = (func) => {
-        if (sessionStorage.getItem('basic_auth')) {
-            const authInfo = JSON.parse(sessionStorage.getItem('basic_auth'));
-            if (authInfo.is_valid == true) func();
-            else onOpenModalAuth();
-        } else onOpenModalAuth()
-    }
 
     const cleanStateOperation = (toastMessage, toastStatus) => {
-        const prevAuthInfo = JSON.parse(sessionStorage.getItem('basic_auth'));
-        if (toastStatus === "success") {
-            sessionStorage.setItem('basic_auth', JSON.stringify({ ...prevAuthInfo, is_valid: true }));
-        } else if (toastStatus === "error") {
-            sessionStorage.setItem('basic_auth', JSON.stringify({ ...prevAuthInfo, is_valid: false }));
-        }
         toast({
             title: toastMessage,
             status: toastStatus,
@@ -69,23 +47,29 @@ function Aboutme({ onOpenModalAuth }) {
         try {
             setIsLoading(true);
 
-            const [username, password] = handleAuthInfo();
+            const token = localStorage.getItem('token');
 
-            const encodedCredentials = btoa(`${username}:${password}`);
+            // decline action if token not exist.
+            if (!token) {
+                cleanStateOperation('Failed to create data.', 'error');
+                return;
+            }
 
             const response = await fetch(`/api/aboutme/${id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Basic ${encodedCredentials}`,
+                    'Authorization': token,
                 },
                 body: JSON.stringify({ content }),
             });
-            if (!response.ok) {
-                cleanStateOperation('Failed to Update data.', 'error');
+
+            if (response.status === 200) {
+                cleanStateOperation('200: Successfully Update data.', 'success');
                 return;
             }
-            cleanStateOperation('200: Successfully Update data.', 'success');
+            else cleanStateOperation('Failed to Update data.', 'error');
+
         } catch (error) {
             console.error(error.message);
             cleanStateOperation('Failed to Update data.', 'error');
@@ -137,7 +121,7 @@ function Aboutme({ onOpenModalAuth }) {
                                         colorScheme='purple' borderColor={"#536189"} focusBorderColor={ternaryColor}
                                         type="text">
                                     </Textarea>
-                                    <Button onClick={() => handleAuthAction(() => handleUpdateData(data.aboutme[0].id))} isLoading={isLoading} my={3}
+                                    <Button onClick={() => handleUpdateData(data.aboutme[0].id)} isLoading={isLoading} my={3}
                                         fontWeight={'bold'} colorScheme='purple' color={'black'}>Update</Button>
                                 </TabPanel>
                             </TabPanels>
@@ -177,7 +161,7 @@ function Aboutme({ onOpenModalAuth }) {
                                         colorScheme='purple' borderColor={"#536189"} focusBorderColor={ternaryColor}
                                         type="text">
                                     </Textarea>
-                                    <Button onClick={() => handleAuthAction(() => handleUpdateData(data.aboutme[0].id))} isLoading={isLoading} my={3}
+                                    <Button onClick={() => handleUpdateData(data.aboutme[0].id)} isLoading={isLoading} my={3}
                                         fontWeight={'bold'} colorScheme='purple' color={'black'}>Update</Button>
                                 </TabPanel>
                             </TabPanels>
@@ -190,8 +174,9 @@ function Aboutme({ onOpenModalAuth }) {
                         />
                     </Flex>
                 </Fragment>
-            )}
-        </Fragment>
+            )
+            }
+        </Fragment >
     )
 }
 

@@ -3,10 +3,17 @@ import { db } from '../../../../firebase';
 import { isAuthenticated } from '@/app/libs/auth';
 
 const withMiddleware = (handler) => async (req, res) => {
-    if (!isAuthenticated(req)) {
-        return res.status(401).json({ success: false, message: 'Authentication failed' });
+    try {
+        const authenticated = await isAuthenticated(req);
+        if (!authenticated) {
+            return res.status(401).json({ success: false, message: 'Authentication failed' });
+        }
+        // Call the handler if authenticated
+        return handler(req, res);
+    } catch (error) {
+        console.error('Error in middleware:', error);
+        return res.status(500).json({ success: false, message: 'Internal Server Error' });
     }
-    return handler(req, res);
 };
 
 const getHandler = async (req, res) => {
@@ -40,7 +47,6 @@ const postHandler = async (req, res) => {
     if (!body.skillsUrl) {
         return res.status(400).json({ message: 'skillsUrl is required' });
     }
-    console.log(body);
     try {
         // Insert data into Firestore
         const postRef = await db.collection('projects').add({

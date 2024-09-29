@@ -1,6 +1,5 @@
 "use client";
 import { Box, Button, Flex, Heading, Input, Text, useToast } from "@chakra-ui/react";
-import { signIn } from "next-auth/react";
 import { Fragment, useState } from "react";
 import useWindowSize from "@/hooks/useWindowSize";
 import { ternaryColor } from "../theme/globalTheme";
@@ -14,7 +13,7 @@ const LoginPage = () => {
     const [isLoading, setIsLoading] = useState(false);
 
     const [loginData, setLoginData] = useState({
-        email: "",
+        username: "",
         password: "",
     });
 
@@ -25,54 +24,69 @@ const LoginPage = () => {
     const onSubmit = async () => {
         setIsLoading(true);
         try {
-            const result = await signIn("credentials", {
-                ...loginData,
-                redirect: false,
+
+            setIsLoading(true);
+
+            const loginApi = await fetch("/api/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(loginData)
             });
 
-            if (result?.error) {
+            if (!loginApi.ok) {
                 toast({
-                    title: "Error logging in",
-                    description: result.error,
-                    status: "error",
-                    isClosable: true,
+                    title: "Invalid credential, Please try again.",
+                    status: 'error',
+                    isClosable: false,
                 });
-            } else {
+                setIsLoading(false);
+                return;
+            }
+
+            if (loginApi.status === 200) {
+                const data = await loginApi.json();
                 toast({
                     title: "Success logging in!",
                     status: "success",
                     isClosable: false,
                 });
-                setLoginData({ email: "", password: "" });
+                setIsLoading(false);
+
+                // set cookie to localstorage
+                localStorage.setItem('token', data?.token);
                 window.location.href = "/dashboard";
+                return;
             }
-            setIsLoading(false);
+
         } catch (error) {
-            console.log(error)
+            console.error(error);
             toast({
                 title: `${error}`,
                 status: 'error',
                 isClosable: false,
-            })
+            });
             setIsLoading(false);
+            return;
         }
-    };
 
+    }
     return (
         <Fragment>
             <Flex height={'90vh'} alignItems="center" justifyContent="center">
                 <Box width={width >= 768 ? "50%" : '70%'} className='lighting-effect-pink' borderRadius={'2xl'} p={5}>
                     <Heading textAlign={'center'} my={2} fontSize={'2xl'}>Login Page</Heading>
                     <Box mx={2}>
-                        <Text>Email</Text>
+                        <Text>Username</Text>
                         <Input
-                            placeholder="Email"
+                            placeholder="Username"
                             borderRadius={'2xl'} my={5} size={'lg'} borderWidth={3}
                             colorScheme='purple' borderColor={"#536189"} focusBorderColor={ternaryColor}
                             onChange={onChange}
-                            value={loginData.email}
-                            type="email"
-                            name="email"
+                            value={loginData.username}
+                            type="text"
+                            name="username"
                             required
                         />
                     </Box>
