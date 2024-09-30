@@ -26,6 +26,18 @@ const postHandler = async (req, res) => {
 };
 
 const handler = async (req, res) => {
+
+    // only allow request from this domain
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+    res.setHeader('Access-Control-Allow-Origin', 'https://barbarpotato.github.io');
+    res.setHeader('Access-Control-Allow-Methods', 'POST');
+    res.setHeader('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version');
+
+    if (req.method === 'OPTIONS') {
+        // Handle preflight request
+        return res.status(200).end();
+    }
+
     if (req.method === 'POST') {
         return postHandler(req, res);
     } else {
